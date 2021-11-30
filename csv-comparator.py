@@ -21,59 +21,54 @@
 
 import sys
 import csv
-from typing import cast
 
+DELIMITER=';'
+QUOTECHAR=':'
 
 def showError(num, text):
     print(text)
     exit(num)
-
+    
+def loadFileInLines(fileLocation):
+    currentFile = list()
+    try:
+        with open(fileLocation) as File:
+            reader = csv.reader(File, delimiter=DELIMITER, quotechar=QUOTECHAR, quoting=csv.QUOTE_MINIMAL)
+            for row in reader:
+                currentFile.append(row)
+    except:
+        showError(2, "Error: " + fileLocation + " file not found")
+    return currentFile
 
 if __name__ == '__main__':
-    NEW_data = list()
-    OLD_data = list()
+    if len(sys.argv) != 3:
+        showError(1, "ERROR:\n"+sys.argv[0]+" fichero1.csv fichero2.csv")
+
+    file1_lines = loadFileInLines(sys.argv[1])
+    file2_lines = loadFileInLines(sys.argv[2])
     fil_NEW = 0
     col_NEW = 0
     leftover_lines = 0
 
-    if len(sys.argv) != 3:
-        showError(1, "ERROR:\n"+sys.argv[0]+" fichero1.csv fichero2.csv")
-
-    try:
-        with open(sys.argv[1], encoding='unicode_escape') as File:
-            reader = csv.reader(File, delimiter=';',
-                                quotechar=':', quoting=csv.QUOTE_MINIMAL)
-            for row in reader:
-                OLD_data.append(row)
-    except:
-        showError(2, "Error: "+sys.argv[1]+" file not found")
-
-    try:
-        with open(sys.argv[2], encoding='unicode_escape') as File:
-            reader = csv.reader(File, delimiter=';',
-                                quotechar=':', quoting=csv.QUOTE_MINIMAL)
-            for row in reader:
-                NEW_data.append(row)
-    except:
-        showError(3, "Error: "+sys.argv[2]+" file not found")
-
-    if len(NEW_data) > len(OLD_data):
-        fil_NEW = len(OLD_data)
-        col_NEW = len(OLD_data[0])
-        leftover_lines = len(NEW_data) - len(OLD_data)
+    if len(file1_lines) > len(file2_lines):
+        fil_NEW = len(file2_lines)
+        col_NEW = len(file2_lines[0])
+        leftover_lines = len(file1_lines) - len(file2_lines)
     else:
-        fil_NEW = len(NEW_data)
-        col_NEW = len(NEW_data[0])
-        leftover_lines = len(OLD_data) - len(NEW_data)
-
-    if leftover_lines != 0:
-        showError(4, "The files do not have the same number of lines")
+        fil_NEW = len(file1_lines)
+        col_NEW = len(file1_lines[0])
+        leftover_lines = len(file2_lines) - len(file1_lines)
 
     for fil_ACT in range(fil_NEW):
         for col_ACT in range(col_NEW):
-            dato1 = str(NEW_data[fil_ACT][col_ACT])
-            dato2 = str(OLD_data[fil_ACT][col_ACT])
+            dato1 = str(file1_lines[fil_ACT][col_ACT])
+            dato2 = str(file2_lines[fil_ACT][col_ACT])
             if dato1 != dato2:
                 print("Discrepancy: "+dato1+" ||| "+dato2)
                 print("ROW: "+str(fil_ACT)+" COLUMN: "+str(col_ACT))
         print("ROW ("+str(fil_ACT)+") status: OK")
+
+    if leftover_lines != 0:
+        print(sys.argv[1] + " have " + str(len(file1_lines)) + " lines.")
+        print(sys.argv[2] + " have " + str(len(file2_lines)) + " lines.")
+        showError(3, "The files do not have the same number of lines")
