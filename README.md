@@ -1,22 +1,27 @@
 # Welcome to csv-comparator !
 
 A simple csv comparator.
-- [Contact](https://github.com/alejandrogm90/) us for more information
-- Browse our Repository
+
+-----
 
 ## Prerequisites ##
 
 In order to run this script the following needs to be installed for Linux, Windows or Macintosh:
  - __Python3__ or higher: 
 
-## Bibliografy
+## How to use it
 
-- Visit the Python [Official Website](https://www.python.org)
+First you need to now the delimeter character betewn comulns usualy is ',' . This is an example:
 
-## Community
+| OS | Command Line |
+| :---: |  :---: |
+| Linux or Mac | ./csv-comparator.py file_1.csv file_2.csv |
+| windows | python csv-comparator.py file_1.csv file_2.csv |
+
+### Community
 
 - Alejandro Gómez @alejandrogm90
 
-## License
+### License
 
 * GNU V3 (see `LICENSE` for details)

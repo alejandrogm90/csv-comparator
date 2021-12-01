@@ -23,52 +23,56 @@ import sys
 import csv
 
 DELIMITER=';'
-QUOTECHAR=':'
 
 def showError(num, text):
     print(text)
     exit(num)
     
 def loadFileInLines(fileLocation):
-    currentFile = list()
+    matrixOfElements = list()
     try:
-        with open(fileLocation) as File:
-            reader = csv.reader(File, delimiter=DELIMITER, quotechar=QUOTECHAR, quoting=csv.QUOTE_MINIMAL)
-            for row in reader:
-                currentFile.append(row)
+        with open(fileLocation) as currentFile:
+            reader = csv.reader(currentFile, delimiter=DELIMITER, quoting=csv.QUOTE_NONE)
+            for line in reader:
+                matrixOfElements.append(line)
     except:
         showError(2, "Error: " + fileLocation + " file not found")
-    return currentFile
+    return matrixOfElements
+
+def getMaximunLines(firstFile, secondFile, sizeFirstFile, sizeSecondFile):
+    if sizeFirstFile > sizeSecondFile:
+        mr = sizeSecondFile
+        mc = len(secondFile[0])
+    else:
+        mr = sizeFirstFile
+        mc = len(firstFile[0])
+
+    return mr, mc
+
+def showdiscrepances(file1, file2, mr, mc):
+    for currentRow in range(mr):
+        for currentColumn in range(mc):
+            dato1 = str(file1[currentRow][currentColumn])
+            dato2 = str(file2[currentRow][currentColumn])
+            if dato1 != dato2:
+                print("Discrepancy: "+dato1+" ||| "+dato2)
+                print("ROW: "+str(currentRow)+" COLUMN: "+str(currentColumn))
+        print("ROW ("+str(currentRow)+") status: OK")
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         showError(1, "ERROR:\n"+sys.argv[0]+" fichero1.csv fichero2.csv")
 
-    file1_lines = loadFileInLines(sys.argv[1])
-    file2_lines = loadFileInLines(sys.argv[2])
-    fil_NEW = 0
-    col_NEW = 0
-    leftover_lines = 0
+    FIRST_FILE = loadFileInLines(sys.argv[1])
+    SECOND_FILE = loadFileInLines(sys.argv[2])
+    SIZE_FIRST_FILE = len(FIRST_FILE)
+    SIZE_SECOND_FILE = len(SECOND_FILE)
 
-    if len(file1_lines) > len(file2_lines):
-        fil_NEW = len(file2_lines)
-        col_NEW = len(file2_lines[0])
-        leftover_lines = len(file1_lines) - len(file2_lines)
-    else:
-        fil_NEW = len(file1_lines)
-        col_NEW = len(file1_lines[0])
-        leftover_lines = len(file2_lines) - len(file1_lines)
-
-    for fil_ACT in range(fil_NEW):
-        for col_ACT in range(col_NEW):
-            dato1 = str(file1_lines[fil_ACT][col_ACT])
-            dato2 = str(file2_lines[fil_ACT][col_ACT])
-            if dato1 != dato2:
-                print("Discrepancy: "+dato1+" ||| "+dato2)
-                print("ROW: "+str(fil_ACT)+" COLUMN: "+str(col_ACT))
-        print("ROW ("+str(fil_ACT)+") status: OK")
-
-    if leftover_lines != 0:
-        print(sys.argv[1] + " have " + str(len(file1_lines)) + " lines.")
-        print(sys.argv[2] + " have " + str(len(file2_lines)) + " lines.")
+    if ( SIZE_FIRST_FILE - SIZE_SECOND_FILE) != 0:
+        print(sys.argv[1] + " have " + str(SIZE_FIRST_FILE) + " lines.")
+        print(sys.argv[2] + " have " + str(SIZE_SECOND_FILE) + " lines.")
         showError(3, "The files do not have the same number of lines")
+
+    MAX_ROW, MAX_COLUMN = getMaximunLines(FIRST_FILE, SECOND_FILE, SIZE_FIRST_FILE, SIZE_SECOND_FILE)
+
+    showdiscrepances(FIRST_FILE, SECOND_FILE, MAX_ROW, MAX_COLUMN)
