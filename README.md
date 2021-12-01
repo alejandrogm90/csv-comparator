@@ -11,7 +11,7 @@ In order to run this script the following needs to be installed for Linux, Windo
 
 ## How to use it
 
-First you need to now the delimeter character betewn comulns usualy is ',' . This is an example:
+First you need to now the delimeter character betewn comulns usualy is comma in UTF-8 encoded. This is an example:
 
 | OS | Command Line |
 | :---: |  :---: |
